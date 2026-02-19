@@ -1,81 +1,121 @@
-# Intercom
+# TRAC Social Comparison Bot 🔥
 
-This repository is a reference implementation of the **Intercom** stack on Trac Network for an **internet of agents**.
+> A TRAC Network Intercom fork — analyze your wallet activity and rank yourself against the global TRAC ecosystem.
 
-At its core, Intercom is a **peer-to-peer (P2P) network**: peers discover each other and communicate directly (with optional relaying) over the Trac/Holepunch stack (Hyperswarm/HyperDHT + Protomux). There is no central server required for sidechannel messaging.
+**Fork of:** [Trac-Systems/intercom](https://github.com/Trac-Systems/intercom)
 
-Features:
-- **Sidechannels**: fast, ephemeral P2P messaging (with optional policy: welcome, owner-only write, invites, PoW, relaying).
-- **SC-Bridge**: authenticated local WebSocket control surface for agents/tools (no TTY required).
-- **Contract + protocol**: deterministic replicated state and optional chat (subnet plane).
-- **MSB client**: optional value-settled transactions via the validator network.
+---
+<img width="1295" height="791" alt="image" src="https://github.com/user-attachments/assets/e1a2dafa-40e3-4660-8139-dfb7bf19ec26" />
 
-Additional references: https://www.moltbook.com/post/9ddd5a47-4e8d-4f01-9908-774669a11c21 and moltbook m/intercom
+## 💡 What is This App?
 
-For full, agent‑oriented instructions and operational guidance, **start with `SKILL.md`**.  
-It includes setup steps, required runtime, first‑run decisions, and operational notes.
+**TRAC Social Comparison Bot** lets you enter any TRAC wallet address and instantly discover:
 
-## Awesome Intercom
+- 📊 Your **percentile rank** vs. global TRAC wallet activity
+- 🏆 Your **status tier** (Diamond, Platinum, Gold, Silver, Bronze)
+- 📈 Breakdown of your activity score vs. network averages
+- 🔥 Personalized insights: *"You're more active than 72% of TRAC wallets"*
 
-For a curated list of agentic Intercom apps check out: https://github.com/Trac-Systems/awesome-intercom
+It turns on-chain data into a social ranking experience — gamified, shareable, and motivating.
 
-## What this repo is for
-- A working, pinned example to bootstrap agents and peers onto Trac Network.
-- A template that can be trimmed down for sidechannel‑only usage or extended for full contract‑based apps.
+---
 
-## How to use
-Use the **Pear runtime only** (never native node).  
-Follow the steps in `SKILL.md` to install dependencies, run the admin peer, and join peers correctly.
+## 🚀 Features
 
-## Architecture (ASCII map)
-Intercom is a single long-running Pear process that participates in three distinct networking "planes":
-- **Subnet plane**: deterministic state replication (Autobase/Hyperbee over Hyperswarm/Protomux).
-- **Sidechannel plane**: fast ephemeral messaging (Hyperswarm/Protomux) with optional policy gates (welcome, owner-only write, invites).
-- **MSB plane**: optional value-settled transactions (Peer -> MSB client -> validator network).
+- **Wallet Activity Scoring** — Based on transaction count, volume, recency, and diversity
+- **Global Percentile Ranking** — Compare yourself to a simulated dataset of 100,000+ wallets
+- **Status Tiers** — Diamond / Platinum / Gold / Silver / Bronze
+- **Shareable Results** — Copy-paste your rank card to social media
+- **Built on Intercom P2P** — Uses Trac Network sidechannels for agent coordination
+- **No login required** — Just enter your TRAC address
 
-```text
-                          Pear runtime (mandatory)
-                pear run . --peer-store-name <peer> --msb-store-name <msb>
-                                        |
-                                        v
-  +-------------------------------------------------------------------------+
-  |                            Intercom peer process                         |
-  |                                                                         |
-  |  Local state:                                                          |
-  |  - stores/<peer-store-name>/...   (peer identity, subnet state, etc)    |
-  |  - stores/<msb-store-name>/...    (MSB wallet/client state)             |
-  |                                                                         |
-  |  Networking planes:                                                     |
-  |                                                                         |
-  |  [1] Subnet plane (replication)                                         |
-  |      --subnet-channel <name>                                            |
-  |      --subnet-bootstrap <admin-writer-key-hex>  (joiners only)          |
-  |                                                                         |
-  |  [2] Sidechannel plane (ephemeral messaging)                             |
-  |      entry: 0000intercom   (name-only, open to all)                     |
-  |      extras: --sidechannels chan1,chan2                                 |
-  |      policy (per channel): welcome / owner-only write / invites         |
-  |      relay: optional peers forward plaintext payloads to others          |
-  |                                                                         |
-  |  [3] MSB plane (transactions / settlement)                               |
-  |      Peer -> MsbClient -> MSB validator network                          |
-  |                                                                         |
-  |  Agent control surface (preferred):                                     |
-  |  SC-Bridge (WebSocket, auth required)                                   |
-  |    JSON: auth, send, join, open, stats, info, ...                       |
-  +------------------------------+------------------------------+-----------+
-                                 |                              |
-                                 | SC-Bridge (ws://host:port)   | P2P (Hyperswarm)
-                                 v                              v
-                       +-----------------+            +-----------------------+
-                       | Agent / tooling |            | Other peers (P2P)     |
-                       | (no TTY needed) |<---------->| subnet + sidechannels |
-                       +-----------------+            +-----------------------+
+---
 
-  Optional for local testing:
-  - --dht-bootstrap "<host:port,host:port>" overrides the peer's HyperDHT bootstraps
-    (all peers that should discover each other must use the same list).
+## 🖥️ Live Demo
+
+Open `index.html` in your browser — no server needed.
+
+**Screenshots:** See `/screenshots/` folder.
+
+---
+
+## 🛠️ Tech Stack
+
+- Vanilla HTML/CSS/JS frontend (`index.html`)
+- Intercom P2P sidechannel for agent messaging
+- Simulated global dataset (100k wallets, realistic distribution)
+- Trac Network contract layer for persistent state
+
+---
+
+## 📦 Setup
+
+```bash
+# Clone this fork
+git clone https://github.com/YOUR_USERNAME/intercom
+cd intercom
+
+# Install dependencies (requires Pear runtime)
+npm install
+
+# Run the admin peer
+node index.js --admin
+
+# Open the app
+open index.html
+```
+
+> **Note:** Uses Pear runtime only (never native node) for the backend agent. The frontend `index.html` works standalone for demo purposes.
+
+---
+
+## 📁 Repo Structure
+
+```
+/
+├── index.html          ← Main app UI (TRAC Social Comparison Bot)
+├── index.js            ← Intercom agent / backend (from upstream)
+├── SKILL.md            ← Agent skill instructions
+├── README.md           ← This file
+├── contract/           ← Trac Network contract (from upstream)
+├── features/           ← Feature modules (from upstream)
+└── screenshots/        ← Proof of working app
 ```
 
 ---
-If you plan to build your own app, study the existing contract/protocol and remove example logic as needed (see `SKILL.md`).
+
+## 🤖 How the Bot Works
+
+1. User enters TRAC wallet address
+2. Bot fetches activity metrics (tx count, volume, recency, token diversity)
+3. Compares against global percentile distribution
+4. Assigns status tier & generates personalized insight
+5. Displays rank card with shareable text
+
+**Example output:**
+```
+🔥 You are more active than 72% of TRAC wallets.
+📊 Activity Score: 847 / 1000
+🥇 Status: GOLD
+📈 Top 28% of the entire TRAC ecosystem
+```
+
+---
+
+##  TRAC Address (for payout)
+
+```
+trac1w70ewsqmnqs0dsvkl00lvje03993l7397czjmvpf2ut4en0cnvdqwpx2ur
+```
+
+> Replace `trac1w70ewsqmnqs0dsvkl00lvje03993l7397czjmvpf2ut4en0cnvdqwpx2ur` with your actual TRAC address before submitting to awesome-intercom.
+
+---
+
+## 📜 License
+
+MIT — Fork freely, build something awesome.
+
+---
+
+*Built for the TRAC Network Intercom fork challenge. Powered by Trac Network P2P infrastructure.*
