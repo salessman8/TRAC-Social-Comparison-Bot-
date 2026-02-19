@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRAC Rank — Social Comparison Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050508;
+    --surface: #0d0d14;
+    --border: #1a1a2e;
+    --accent: #00f5a0;
+    --accent2: #00d4ff;
+    --accent3: #ff6b35;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --diamond: #b9f0ff;
+    --platinum: #e8e0ff;
+    --gold: #ffd700;
+    --silver: #c0c0d0;
+    --bronze: #cd7f32;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,160,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,160,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 70% 20%, rgba(0,212,255,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 80%, rgba(0,245,160,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+    animation: aurora 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes aurora {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(2%, 2%) rotate(3deg); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .logo-tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: 1px solid rgba(0,245,160,0.3);
+    padding: 4px 12px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .logo-tag::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(52px, 10vw, 96px);
+    letter-spacing: 4px;
+    line-height: 0.9;
+    background: linear-gradient(135deg, #fff 0%, var(--accent2) 50%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  /* Input section */
+  .input-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px;
+    margin-bottom: 32px;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  }
+
+  .input-section::before {
+    content: 'WALLET INPUT';
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    background: var(--surface);
+    padding: 0 8px;
+  }
+
+  .input-group {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .wallet-input {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    padding: 14px 18px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .wallet-input::placeholder {
+    color: var(--muted);
+    letter-spacing: 0;
+  }
+
+  .wallet-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(0,245,160,0.1);
+  }
+
+  .analyze-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    white-space: nowrap;
+  }
+
+  .analyze-btn:hover {
+    background: #00ffb3;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,245,160,0.3);
+  }
+
+  .analyze-btn:active { transform: translateY(0); }
+
+  .analyze-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .demo-hint {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .demo-hint span {
+    color: var(--accent2);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* Loading */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 48px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .loading.active { display: block; }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Results */
+  .results {
+    display: none;
+    animation: fadeUp 0.5s ease;
+  }
+
+  .results.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Rank card */
+  .rank-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 40px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+  }
+
+  .rank-card-glow {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+  }
+
+  .tier-diamond .rank-card-glow { background: radial-gradient(ellipse at top left, rgba(185,240,255,0.08) 0%, transparent 60%); }
+  .tier-platinum .rank-card-glow { background: radial-gradient(ellipse at top left, rgba(232,224,255,0.08) 0%, transparent 60%); }
+  .tier-gold .rank-card-glow { background: radial-gradient(ellipse at top left, rgba(255,215,0,0.08) 0%, transparent 60%); }
+  .tier-silver .rank-card-glow { background: radial-gradient(ellipse at top left, rgba(192,192,208,0.08) 0%, transparent 60%); }
+  .tier-bronze .rank-card-glow { background: radial-gradient(ellipse at top left, rgba(205,127,50,0.08) 0%, transparent 60%); }
+
+  .rank-card .rank-card-glow { opacity: 1; }
+
+  .rank-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .wallet-display {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .wallet-display strong {
+    display: block;
+    color: var(--accent2);
+    font-size: 13px;
+    margin-top: 4px;
+    word-break: break-all;
+  }
+
+  .tier-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid currentColor;
+    padding: 8px 16px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+
+  .tier-diamond .tier-badge { color: var(--diamond); border-color: rgba(185,240,255,0.4); }
+  .tier-platinum .tier-badge { color: var(--platinum); border-color: rgba(232,224,255,0.4); }
+  .tier-gold .tier-badge { color: var(--gold); border-color: rgba(255,215,0,0.4); }
+  .tier-silver .tier-badge { color: var(--silver); border-color: rgba(192,192,208,0.4); }
+  .tier-bronze .tier-badge { color: var(--bronze); border-color: rgba(205,127,50,0.4); }
+
+  /* Big insight */
+  .insight-text {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(28px, 5vw, 48px);
+    letter-spacing: 2px;
+    line-height: 1.1;
+    margin-bottom: 32px;
+    color: var(--text);
+  }
+
+  .insight-text .highlight {
+    display: block;
+    font-size: clamp(40px, 8vw, 80px);
+    letter-spacing: 0;
+  }
+
+  .tier-diamond .insight-text .highlight { color: var(--diamond); }
+  .tier-platinum .insight-text .highlight { color: var(--platinum); }
+  .tier-gold .insight-text .highlight { color: var(--gold); }
+  .tier-silver .insight-text .highlight { color: var(--silver); }
+  .tier-bronze .insight-text .highlight { color: var(--bronze); }
+
+  /* Score bar */
+  .score-section {
+    margin-bottom: 32px;
+  }
+
+  .score-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .score-value {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .score-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .tier-diamond .score-fill { background: var(--diamond); }
+  .tier-platinum .score-fill { background: var(--platinum); }
+  .tier-gold .score-fill { background: linear-gradient(90deg, var(--bronze), var(--gold)); }
+  .tier-silver .score-fill { background: var(--silver); }
+  .tier-bronze .score-fill { background: var(--bronze); }
+
+  /* Breakdown grid */
+  .breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 500px) {
+    .breakdown-grid { grid-template-columns: 1fr; }
+  }
+
+  .breakdown-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    padding: 16px;
+  }
+
+  .breakdown-item-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .breakdown-item-value {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 32px;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+
+  .breakdown-item-sub {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    margin-top: 2px;
+  }
+
+  /* Share section */
+  .share-section {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .share-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .share-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .share-btn.primary {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .share-btn.primary:hover {
+    background: var(--accent);
+    color: #000;
+  }
+
+  /* Distribution chart */
+  .dist-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 28px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .dist-card::before {
+    content: 'GLOBAL DISTRIBUTION';
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    background: var(--surface);
+    padding: 0 8px;
+  }
+
+  .dist-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 80px;
+    margin-top: 16px;
+  }
+
+  .dist-bar {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    position: relative;
+    transition: background 0.3s;
+    min-width: 6px;
+  }
+
+  .dist-bar.highlight { background: var(--accent); }
+  .dist-bar::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 0;
+  }
+
+  .you-marker {
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-top: 8px;
+  }
+
+  /* Compare to avg */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+  }
+
+  .compare-table th {
+    text-align: left;
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+  }
+
+  .compare-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .compare-table tr:last-child td { border-bottom: none; }
+
+  .compare-table .you-val { color: var(--accent); font-weight: 700; }
+  .compare-table .avg-val { color: var(--muted); }
+  .compare-table .delta-pos { color: var(--accent); }
+  .compare-table .delta-neg { color: var(--accent3); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 12px 20px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 100;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 60px;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    line-height: 2;
+  }
+
+  .footer a {
+    color: var(--accent2);
+    text-decoration: none;
+  }
+
+  /* Pulse animation for tier icon */
+  .tier-icon {
+    display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-tag">TRAC NETWORK // INTERCOM AGENT</div>
+    <h1>TRAC<br>RANK</h1>
+    <p class="subtitle">// SOCIAL COMPARISON BOT v1.0 //</p>
+  </div>
+
+  <!-- Input -->
+  <div class="input-section">
+    <div class="input-group">
+      <input
+        type="text"
+        class="wallet-input"
+        id="walletInput"
+        placeholder="Enter TRAC wallet address..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">ANALYZE →</button>
+    </div>
+    <div class="demo-hint">
+      Try a demo: <span onclick="loadDemo('demo1')">bc1q...x7k2</span> · 
+      <span onclick="loadDemo('demo2')">bc1p...m9f4</span> · 
+      <span onclick="loadDemo('demo3')">bc1q...r3t8</span>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div>QUERYING TRAC NETWORK...</div>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+
+    <!-- Main rank card -->
+    <div class="rank-card" id="rankCard">
+      <div class="rank-card-glow"></div>
+
+      <div class="rank-header">
+        <div class="wallet-display">
+          WALLET ADDRESS
+          <strong id="walletDisplay"></strong>
+        </div>
+        <div class="tier-badge" id="tierBadge">
+          <span class="tier-icon" id="tierIcon">💎</span>
+          <span id="tierName">DIAMOND</span>
+        </div>
+      </div>
+
+      <div class="insight-text">
+        YOU ARE MORE ACTIVE THAN
+        <span class="highlight" id="percentileDisplay">72%</span>
+        OF ALL TRAC WALLETS
+      </div>
+
+      <div class="score-section">
+        <div class="score-label">
+          <span>ACTIVITY SCORE</span>
+          <span class="score-value" id="scoreDisplay">847 / 1000</span>
+        </div>
+        <div class="score-bar">
+          <div class="score-fill" id="scoreFill"></div>
+        </div>
+      </div>
+
+      <div class="breakdown-grid" id="breakdownGrid">
+        <!-- filled by JS -->
+      </div>
+
+      <div class="share-section">
+        <button class="share-btn primary" onclick="copyResult()">⬡ COPY RANK CARD</button>
+        <button class="share-btn" onclick="resetApp()">← NEW WALLET</button>
+      </div>
+    </div>
+
+    <!-- Distribution -->
+    <div class="dist-card" id="distCard">
+      <span style="font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:1px;">YOUR POSITION IN THE GLOBAL DISTRIBUTION</span>
+      <div class="dist-chart" id="distChart"></div>
+      <div class="you-marker" id="youMarker"></div>
+    </div>
+
+    <!-- Compare table -->
+    <div class="dist-card">
+      <span style="font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:1px;">YOU VS. NETWORK AVERAGE</span>
+      <table class="compare-table" id="compareTable" style="margin-top:16px;">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>YOU</th>
+            <th>AVG WALLET</th>
+            <th>DELTA</th>
+          </tr>
+        </thead>
+        <tbody id="compareBody">
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    BUILT ON <a href="https://github.com/Trac-Systems/intercom" target="_blank">TRAC NETWORK INTERCOM</a> //
+    P2P SIDECHANNEL AGENT //<br>
+    FORK: <a href="https://github.com/Trac-Systems/awesome-intercom" target="_blank">AWESOME-INTERCOM</a> //
+    DATASET: 100K+ SIMULATED WALLETS
+  </div>
+
+</div>
+
+<div class="toast" id="toast">COPIED TO CLIPBOARD ✓</div>
+
+<script>
+// ─── Config ──────────────────────────────────────────────────────────────────
+
+const TIERS = [
+  { name: 'DIAMOND',  icon: '💎', class: 'tier-diamond',  min: 95 },
+  { name: 'PLATINUM', icon: '🔮', class: 'tier-platinum', min: 85 },
+  { name: 'GOLD',     icon: '🏆', class: 'tier-gold',     min: 65 },
+  { name: 'SILVER',   icon: '🥈', class: 'tier-silver',   min: 35 },
+  { name: 'BRONZE',   icon: '🔵', class: 'tier-bronze',   min: 0  },
+];
+
+const DEMO_WALLETS = {
+  demo1: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+  demo2: 'bc1p5d7rjq7g6rdk2yhzks9smlaqtedr4dekq08ge6',
+  demo3: 'bc1qr55j7d3lhf024r90rtm9ey3lv5x8ywxqr3t8k2',
+};
+
+const AVG_STATS = {
+  txCount: 47,
+  volume: 1240,
+  daysSinceLastTx: 22,
+  uniqueTokens: 3,
+};
+
+// ─── Simulate wallet score ────────────────────────────────────────────────────
+
+function hashCode(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+  }
+  return Math.abs(h);
+}
+
+function seededRandom(seed) {
+  // LCG
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 4294967296;
+  };
+}
+
+function generateWalletStats(address) {
+  const seed = hashCode(address);
+  const rnd = seededRandom(seed);
+
+  // Log-normal distribution simulation
+  const norm = () => {
+    const u = 1 - rnd();
+    const v = 1 - rnd();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  };
+
+  const txCount = Math.max(1, Math.round(Math.exp(3.5 + norm() * 1.2)));
+  const volume  = Math.max(10, Math.round(Math.exp(7 + norm() * 1.5)));
+  const daysSince = Math.max(0, Math.round(Math.abs(norm() * 30 + 14)));
+  const uniqueTokens = Math.max(1, Math.min(20, Math.round(rnd() * 10 + 1)));
+
+  // Scores (weighted)
+  const txScore      = Math.min(300, Math.round(Math.log1p(txCount) / Math.log1p(1000) * 300));
+  const volScore     = Math.min(350, Math.round(Math.log1p(volume) / Math.log1p(100000) * 350));
+  const recencyScore = Math.min(200, Math.round(Math.max(0, 200 - daysSince * 4)));
+  const diversityScore = Math.min(150, Math.round(uniqueTokens / 20 * 150));
+
+  const total = txScore + volScore + recencyScore + diversityScore;
+
+  return { txCount, volume, daysSince, uniqueTokens, txScore, volScore, recencyScore, diversityScore, total };
+}
+
+function scoreToPercentile(score) {
+  // Logistic curve — most wallets cluster low, long tail up top
+  const normalized = score / 1000;
+  const raw = 100 / (1 + Math.exp(-8 * (normalized - 0.35)));
+  return Math.min(99, Math.max(1, Math.round(raw)));
+}
+
+function getTier(percentile) {
+  return TIERS.find(t => percentile >= t.min) || TIERS[TIERS.length - 1];
+}
+
+// ─── UI helpers ───────────────────────────────────────────────────────────────
+
+function loadDemo(key) {
+  document.getElementById('walletInput').value = DEMO_WALLETS[key];
+  analyze();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function resetApp() {
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('walletInput').value = '';
+  document.getElementById('walletInput').focus();
+  // Remove tier class
+  document.body.className = '';
+}
+
+function copyResult() {
+  const addr = document.getElementById('walletInput').value.trim();
+  const pct = document.getElementById('percentileDisplay').textContent;
+  const score = document.getElementById('scoreDisplay').textContent;
+  const tier = document.getElementById('tierName').textContent;
+  const icon = document.getElementById('tierIcon').textContent;
+
+  const text =
+`${icon} TRAC RANK RESULT ${icon}
+━━━━━━━━━━━━━━━━━━━━
+Wallet: ${addr.slice(0,12)}...${addr.slice(-6)}
+Activity Score: ${score}
+Percentile: Top ${100 - parseInt(pct)}%
+Status: ${tier}
+
+I'm more active than ${pct} of all TRAC wallets!
+🔗 tracrank.app | Built on Trac Network Intercom`;
+
+  navigator.clipboard.writeText(text).then(() => showToast('COPIED TO CLIPBOARD ✓'));
+}
+
+// ─── Main analyze ─────────────────────────────────────────────────────────────
+
+function analyze() {
+  const input = document.getElementById('walletInput');
+  const address = input.value.trim();
+  if (!address) {
+    input.style.borderColor = 'var(--accent3)';
+    setTimeout(() => input.style.borderColor = '', 1000);
+    return;
+  }
+
+  // Show loading
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('loading').classList.add('active');
+  document.getElementById('analyzeBtn').disabled = true;
+
+  // Simulate network delay (agent query)
+  setTimeout(() => {
+    document.getElementById('loading').classList.remove('active');
+    renderResults(address);
+    document.getElementById('analyzeBtn').disabled = false;
+  }, 1600 + Math.random() * 800);
+}
+
+function renderResults(address) {
+  const stats = generateWalletStats(address);
+  const percentile = scoreToPercentile(stats.total);
+  const tier = getTier(percentile);
+
+  // Apply tier class to body for color theming
+  document.getElementById('rankCard').className = 'rank-card ' + tier.class;
+
+  // Wallet display
+  const shortAddr = address.length > 20
+    ? address.slice(0, 12) + '...' + address.slice(-8)
+    : address;
+  document.getElementById('walletDisplay').textContent = shortAddr;
+
+  // Tier badge
+  document.getElementById('tierIcon').textContent = tier.icon;
+  document.getElementById('tierName').textContent = tier.name;
+
+  // Percentile
+  document.getElementById('percentileDisplay').textContent = percentile + '%';
+
+  // Score
+  document.getElementById('scoreDisplay').textContent = stats.total + ' / 1000';
+
+  // Score bar animation
+  const fill = document.getElementById('scoreFill');
+  fill.style.transform = 'scaleX(0)';
+  setTimeout(() => {
+    fill.style.transform = `scaleX(${stats.total / 1000})`;
+  }, 100);
+
+  // Breakdown grid
+  const grid = document.getElementById('breakdownGrid');
+  grid.innerHTML = `
+    <div class="breakdown-item">
+      <div class="breakdown-item-label">Transaction Count</div>
+      <div class="breakdown-item-value">${stats.txCount.toLocaleString()}</div>
+      <div class="breakdown-item-sub">Score: ${stats.txScore} / 300</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-item-label">Volume (TRAC)</div>
+      <div class="breakdown-item-value">${stats.volume.toLocaleString()}</div>
+      <div class="breakdown-item-sub">Score: ${stats.volScore} / 350</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-item-label">Days Since Last TX</div>
+      <div class="breakdown-item-value">${stats.daysSince}</div>
+      <div class="breakdown-item-sub">Score: ${stats.recencyScore} / 200</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-item-label">Unique Tokens</div>
+      <div class="breakdown-item-value">${stats.uniqueTokens}</div>
+      <div class="breakdown-item-sub">Score: ${stats.diversityScore} / 150</div>
+    </div>
+  `;
+
+  // Distribution chart
+  renderDistChart(percentile);
+
+  // Compare table
+  renderCompareTable(stats);
+
+  // Show results
+  document.getElementById('results').classList.add('active');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderDistChart(userPercentile) {
+  const chart = document.getElementById('distChart');
+  const bars = 40;
+  const bucketSize = 100 / bars;
+  const userBucket = Math.floor(userPercentile / bucketSize);
+
+  // Bell curve skewed left (most wallets are low activity)
+  chart.innerHTML = '';
+  for (let i = 0; i < bars; i++) {
+    const x = i / bars;
+    // Exponential decay — many low, few high
+    const rawH = Math.exp(-x * 3) * 0.9 + 0.05 + Math.random() * 0.05;
+    const pct = Math.max(8, Math.min(100, Math.round(rawH * 100)));
+    const isHighlight = i === userBucket;
+
+    const bar = document.createElement('div');
+    bar.className = 'dist-bar' + (isHighlight ? ' highlight' : '');
+    bar.style.height = pct + '%';
+    chart.appendChild(bar);
+  }
+
+  document.getElementById('youMarker').textContent =
+    `▲ YOU ARE HERE — ${userPercentile}th PERCENTILE`;
+}
+
+function renderCompareTable(stats) {
+  const rows = [
+    {
+      label: 'Transaction Count',
+      you: stats.txCount.toLocaleString(),
+      avg: AVG_STATS.txCount.toLocaleString(),
+      rawYou: stats.txCount,
+      rawAvg: AVG_STATS.txCount,
+    },
+    {
+      label: 'Volume (TRAC)',
+      you: stats.volume.toLocaleString(),
+      avg: AVG_STATS.volume.toLocaleString(),
+      rawYou: stats.volume,
+      rawAvg: AVG_STATS.volume,
+    },
+    {
+      label: 'Days Since Last TX',
+      you: stats.daysSince,
+      avg: AVG_STATS.daysSinceLastTx,
+      rawYou: -stats.daysSince,   // lower is better
+      rawAvg: -AVG_STATS.daysSinceLastTx,
+    },
+    {
+      label: 'Unique Tokens',
+      you: stats.uniqueTokens,
+      avg: AVG_STATS.uniqueTokens,
+      rawYou: stats.uniqueTokens,
+      rawAvg: AVG_STATS.uniqueTokens,
+    },
+  ];
+
+  const tbody = document.getElementById('compareBody');
+  tbody.innerHTML = rows.map(r => {
+    const better = r.rawYou >= r.rawAvg;
+    const pct = r.rawAvg !== 0
+      ? Math.round((Math.abs(r.rawYou - r.rawAvg) / r.rawAvg) * 100)
+      : 0;
+    const deltaText = r.rawYou === r.rawAvg
+      ? '= AVG'
+      : (better ? `+${pct}%` : `-${pct}%`);
+    const deltaClass = better ? 'delta-pos' : 'delta-neg';
+
+    return `<tr>
+      <td>${r.label}</td>
+      <td class="you-val">${r.you}</td>
+      <td class="avg-val">${r.avg}</td>
+      <td class="${deltaClass}">${deltaText}</td>
+    </tr>`;
+  }).join('');
+}
+
+// Enter key support
+document.getElementById('walletInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') analyze();
+});
+</script>
+
+</body>
+</html>
